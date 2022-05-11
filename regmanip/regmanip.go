@@ -1,13 +1,14 @@
 package regmanip
 
-import(
-	"golang.org/x/sys/windows/registry"
+import (
+	"errors"
 	"fmt"
 	"log"
-	"errors"
+
+	"golang.org/x/sys/windows/registry"
 )
 
-func requestKey(requestedKey string){
+func requestKey(requestedKey string) {
 
 	log.SetPrefix("RequestKet: ")
 	log.SetFlags(0)
@@ -17,20 +18,17 @@ func requestKey(requestedKey string){
 		log.Fatal(err)
 	}
 	defer k.Close()
-	
+
 }
 
-
-
-func TryAccess(requestedKey string, requestedRootKey int ){ 
+func TryAccess(requestedKey string, requestedRootKey int) {
 	/*
 		Takes the request Key as string then returns its value
 
 	*/
 
 	k, err := registry.OpenKey(getRootKey(requestedRootKey), requestedKey, registry.QUERY_VALUE)
-	//k, err := registry.OpenKey(registry.LOCAL_MACHINE,  ,registry.QUERY_VALUE)
-	
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -43,15 +41,14 @@ func TryAccess(requestedKey string, requestedRootKey int ){
 
 }
 
-
-func getRootKey(codifiedKey int) (registry.Key) { 
+func getRootKey(codifiedKey int) registry.Key {
 	/*
 		Associate an integer in input to a Windows registry root key
 		1 : LOCAL_MACHINE
 		2 : USERS
 		3 : CURRENT_USER
 		default : LOCAL_MACHINE
-		
+
 
 	*/
 
@@ -59,15 +56,38 @@ func getRootKey(codifiedKey int) (registry.Key) {
 
 	switch codifiedKey {
 	case 1:
-		return registry.LOCAL_MACHINE 
+		return registry.LOCAL_MACHINE
 	case 2:
 		return registry.USERS
-	case 3: 
+	case 3:
 		return registry.CURRENT_USER
 	default:
 		log.Fatal(errors.New("Input int unassociated, default = 1 (1,2 or 3 only)"))
 		return registry.LOCAL_MACHINE
 	}
-	
+
 }
 
+func TestKey(requestedKey string, requestedRootKey int) {
+
+	k, err := registry.OpenKey(getRootKey(requestedRootKey), requestedKey, registry.QUERY_VALUE)
+
+	if err != nil {
+		log.Fatal()
+	}
+	defer k.Close()
+
+	subkeysTable, err := k.ReadSubKeyNames(5)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("zebi")
+
+	for iterator, subkey := range subkeysTable {
+
+		fmt.Printf("subkey %d => %s", iterator, subkey)
+
+	}
+
+}

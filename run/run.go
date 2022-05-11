@@ -1,11 +1,12 @@
 package main
 
-import(
+import (
+	"osiris/procexplorer"
 	"osiris/regmanip"
 )
 
-func main(){
+func main() {
 
 	regmanip.TryAccess(`SOFTWARE\Microsoft\Windows NT\CurrentVersion`, 1)
-
+	procexplorer.Testing()
 }
