@@ -13,7 +13,6 @@ func Hello() {
 }
 func Testing() {
 
-	fmt.Printf("it smell like bitch in here")
 	pid_table, err := process.Pids()
 	if err != nil {
 		log.Fatal(err)
@@ -21,7 +20,7 @@ func Testing() {
 
 	for _, pid := range pid_table {
 
-		fmt.Printf("PID : %d  \n", pid)
+		fmt.Printf("PID : %d  => PATH : %s\n", pid, GetProcessExePath(pid))
 
 	}
 
@@ -40,7 +39,9 @@ func GetProcessExePath(PID int32) string {
 	path, err := proc.Exe()
 
 	if err != nil {
-		log.Fatal("Couille avec le path du proc")
+		//log.Fatal("Couille avec le path du proc")
+		return "couille"
+
 	}
 	return path
 
