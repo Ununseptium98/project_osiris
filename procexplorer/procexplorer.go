@@ -3,7 +3,6 @@ package procexplorer
 import (
 	"fmt"
 	"log"
-	"osiris/hashing"
 
 	"github.com/shirou/gopsutil/process"
 )
@@ -22,7 +21,7 @@ func Testing() {
 	for _, pid := range pid_table {
 
 		fmt.Printf("PID : %d  => PATH : %s\n", pid, GetProcessExePath(pid))
-		fmt.Printf("\n HASH => %s", hashing.Testing(GetProcessExePath(pid)))
+		//fmt.Printf("\n HASH => %s", hashing.Testing(GetProcessExePath(pid)))
 	}
 
 }
