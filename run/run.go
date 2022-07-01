@@ -15,12 +15,12 @@ func main() {
 	//fmt.Println(string(osiris.GetProcessExeHashJson()))
 
 	osiris.CreateWatchList()
-	osiris.AppendWatchList("FAK3")
-	osiris.AppendWatchList("FAK4")
 
 	for i, lines := range osiris.ReadWatchList() {
 
 		fmt.Println("lines = ", lines, " i =", i)
 	}
+
+	fmt.Println(osiris.WriteJsonWatchList())
 
 }

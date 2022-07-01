@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"golang.org/x/mod/sumdb/dirhash"
+	"github.com/gosimple/hashdir"
 )
 
 func PathTomd5(PathToFile string) string {
@@ -33,14 +33,17 @@ func PathTomd5(PathToFile string) string {
 
 }
 
-func DirHash(dir []string) string {
+func DirHash(path string) (string, error) {
 	//TODO calculate hash of files into the directory, then calculate a hash of the directory
 	//based on the file hashes ?
 
-	var hash = dirhash.Hash(dir)
+	dirHash, err := hashdir.Make(path, "md5")
 
-	hash := dirhash.HashDir(`C:\Users\Nazim\Videos`)
+	if err != nil {
+		return "Error - failed to hash the directory, verify the path ?", err
+	}
 
-	return hash
+	fmt.Println("hash => ", dirHash)
+	return dirHash, err
 
 }
