@@ -16,11 +16,8 @@ func main() {
 
 	osiris.CreateWatchList()
 
-	for i, lines := range osiris.ReadWatchList() {
+	fmt.Println(osiris.WatcherJSON())
 
-		fmt.Println("lines = ", lines, " i =", i)
-	}
-
-	fmt.Println(osiris.WriteJsonWatchList())
+	osiris.ReadJson()
 
 }

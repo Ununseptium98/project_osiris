@@ -43,7 +43,6 @@ func DirHash(path string) (string, error) {
 		return "Error - failed to hash the directory, verify the path ?", err
 	}
 
-	fmt.Println("hash => ", dirHash)
 	return dirHash, err
 
 }

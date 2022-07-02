@@ -52,8 +52,6 @@ func GetProcessExeHashMap() map[string]string {
 		//associate each prpcess exe path to its hash in a map
 		pidProcessMap[processPath] = PathTomd5(processPath)
 
-		//fmt.Printf("PID : %d  => PATH : %s\n", pid, processPath)
-
 	}
 
 	return pidProcessMap

@@ -2,7 +2,6 @@ package osiris
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 )
@@ -14,15 +13,13 @@ func CreateWatchList() {
 	}
 	defer file.Close() // Make sure to close the file when you're done
 
-	len, err := file.WriteString(`C:\Users\Nazim\Videos\` + "\n")
-	len, err = file.WriteString(`C:\Users\Nazim\Videos\World Of Warcraft` + "\n")
-	len, err = file.WriteString(`C:\Users\Nazim\Videos\World Of Warcraft\bite.png` + "\n")
+	_, err = file.WriteString(`C:\Users\Nazim\Videos\` + "\n")
+	_, err = file.WriteString(`C:\Users\Nazim\Videos\World Of Warcraft` + "\n")
+	_, err = file.WriteString(`C:\Users\Nazim\Videos\World Of Warcraft\bite.png` + "\n")
 
 	if err != nil {
 		log.Fatalf("failed writing to file: %s", err)
 	}
-	fmt.Printf("\nLength: %d bytes", len)
-	fmt.Printf("\nFile Name: %s", file.Name())
 
 }
 
@@ -74,7 +71,7 @@ func ReadWatchList() []string {
 
 }
 
-func WriteJsonWatchList() map[string]string {
+func WatcherJSON() map[string]string {
 	/*
 		writes in json format the hash of the directories or files
 	*/
@@ -83,7 +80,7 @@ func WriteJsonWatchList() map[string]string {
 
 	pathHashMap := make(map[string]string)
 
-	for _, path := range pathsTable { //iterates over the paths
+	for _, path := range pathsTable { //iterates over the pathsZ
 
 		lastChar := string(path[len(path)-1]) //gets the last char
 
