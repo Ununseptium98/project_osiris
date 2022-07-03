@@ -1,25 +1,26 @@
 package osiris
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"strconv"
 
 	"golang.org/x/sys/windows/registry"
 )
 
-func requestKey(requestedKey string) {
-
-	log.SetPrefix("RequestKet: ")
-	log.SetFlags(0)
+func TestRequestKey(requestedKey string) error {
 
 	k, err := registry.OpenKey(registry.LOCAL_MACHINE, requestedKey, registry.QUERY_VALUE)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer k.Close()
 
+	return nil
 }
 
 func TryAccess(requestedKey string, requestedRootKey int) {
@@ -110,7 +111,7 @@ func TestKey(requestedKey string, requestedRootKey int) {
 
 }
 
-func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]string {
+func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bool, requestID string) map[string]string {
 	/*
 		List all values of a given key or subkey
 
@@ -118,12 +119,12 @@ func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]strin
 
 	k, err := registry.OpenKey(getRootKey(requestedRootKey), requestedKey, registry.QUERY_VALUE)
 
-	keyValueMap := make(map[string]string)
-
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer k.Close()
+
+	keyValueMap := make(map[string]string)
 
 	valueNames, err := k.ReadValueNames(-1) // reads all names in the key
 	if err != nil {
@@ -147,7 +148,7 @@ func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]strin
 			}
 
 			keyValueMap[name] = value
-			fmt.Printf("Name is : %s  = %s \n", name, value)
+			fmt.Printf("----\nName > %s\n value = %s \n", name, value)
 
 		case registry.EXPAND_SZ:
 			s, _, err := k.GetStringValue(name)
@@ -161,7 +162,7 @@ func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]strin
 			}
 
 			keyValueMap[name] = value
-			fmt.Printf("Name is : %s  = %s \n", name, value)
+			fmt.Printf("----\nName > %s\n value =  %s \n", name, value)
 
 		case registry.DWORD, registry.QWORD:
 			value, _, err := k.GetIntegerValue(name)
@@ -170,7 +171,7 @@ func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]strin
 			}
 
 			keyValueMap[name] = strconv.FormatInt(int64(value), 10)
-			fmt.Printf("Name is : %s  = %s \n", name, strconv.FormatInt(int64(value), 10))
+			fmt.Printf("----\nName > %s\n value = %s \n", name, strconv.FormatInt(int64(value), 10))
 
 		case registry.BINARY:
 			value, _, err := k.GetBinaryValue(name)
@@ -179,7 +180,7 @@ func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]strin
 			}
 
 			keyValueMap[name] = string(value)
-			fmt.Printf("Name is : %s  = %s \n", name, string(value))
+			fmt.Printf("----\nName > %s\n value = %x \n", name, value)
 
 		case registry.MULTI_SZ:
 			value, _, err := k.GetStringsValue(name)
@@ -187,12 +188,12 @@ func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]strin
 				log.Fatal(err)
 			}
 			keyValueMap[name] = value[0]
-			fmt.Printf("Name is : %s  = %s \n", name, value)
+			fmt.Printf("----\nName > %s\n value =  %s \n", name, value)
 
 		default:
 			value := "Unhandled Value type"
 			keyValueMap[name] = value
-			fmt.Printf("Name is : %s  = %s \n", name, value)
+			fmt.Printf("----\nName is : %s  = %s \n", name, value)
 
 		}
 
@@ -205,7 +206,15 @@ func GetAllKeyValues(requestedKey string, requestedRootKey int) map[string]strin
 
 		keyValueMap[name] = value //associates ValueName name with its value
 
-		fmt.Printf("Name is : %s  = %s \n", name, value)
+	}
+
+	if printJSON {
+		json, _ := json.Marshal(keyValueMap)
+
+		ioutil.WriteFile(requestID+"_KeyValues.json", json, os.ModePerm)
+
+		fmt.Println("OUTPUT : " + requestID + "_KeyValues.json")
+
 	}
 
 	return keyValueMap
@@ -235,7 +244,7 @@ func GetSubKeyValues(requestedKey string, requestedRootKey int, subkeyNumber int
 
 		fmt.Printf("Iteration number %d with %s \n", iterator, requestedKey+`\`+subkey)
 
-		GetAllKeyValues(requestedKey+`\`+subkey, requestedRootKey)
+		GetAllKeyValuesJSON(requestedKey+`\`+subkey, requestedRootKey, false, "")
 
 	}
 

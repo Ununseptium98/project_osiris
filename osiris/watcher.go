@@ -2,25 +2,27 @@ package osiris
 
 import (
 	"bufio"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"strings"
+	"time"
 )
 
 func CreateWatchList() {
-	file, err := os.Create("watchList.txt") // Truncates if file already exists, be careful!
-	if err != nil {
-		log.Fatalf("failed creating file: %s", err)
+
+	if _, err := os.Stat("WatchList.txt"); err == nil { //file exists
+		return
+	} else {
+		file, err := os.Create("watchList.txt") // Truncates if file already exists, be careful!
+		if err != nil {
+			log.Fatalf("failed creating file: %s", err)
+		}
+		defer file.Close() // Make sure to close the file when you're done
+
 	}
-	defer file.Close() // Make sure to close the file when you're done
-
-	_, err = file.WriteString(`C:\Users\Nazim\Videos\` + "\n")
-	_, err = file.WriteString(`C:\Users\Nazim\Videos\World Of Warcraft` + "\n")
-	_, err = file.WriteString(`C:\Users\Nazim\Videos\World Of Warcraft\bite.png` + "\n")
-
-	if err != nil {
-		log.Fatalf("failed writing to file: %s", err)
-	}
-
 }
 
 func AppendWatchList(pathToWatch string) {
@@ -77,7 +79,6 @@ func WatcherJSON() map[string]string {
 	*/
 
 	pathsTable := ReadWatchList() //Reads file paths from watchlist
-
 	pathHashMap := make(map[string]string)
 
 	for _, path := range pathsTable { //iterates over the pathsZ
@@ -100,4 +101,15 @@ func WatcherJSON() map[string]string {
 	}
 
 	return pathHashMap
+}
+
+func WriteWatcherJSON() {
+
+	date := strings.Split(time.Now().String(), " ")[0] //Gets date
+
+	watcherReport := WatcherJSON()
+	json, _ := json.Marshal(watcherReport)
+	ioutil.WriteFile(date+"_WatcherReport.json", json, os.ModePerm)
+
+	fmt.Println("OUTPUT : " + date + "_WatcherReport.json")
 }

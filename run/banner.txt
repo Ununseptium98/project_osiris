@@ -1,0 +1,10 @@
+██╗   ██╗ █████╗ ███████╗████████╗
+╚██╗ ██╔╝██╔══██╗██╔════╝╚══██╔══╝
+ ╚████╔╝ ███████║█████╗     ██║   
+  ╚██╔╝  ██╔══██║██╔══╝     ██║   
+   ██║   ██║  ██║██║        ██║   
+   ╚═╝   ╚═╝  ╚═╝╚═╝        ╚═╝   
+                                  
+YET ANOTHER FORENSIC TOOL
+YAFT might run either as an interactive tool or agent mode (on fait genre hein).
+Remember guys, this is an early alpha mode of the tool :) 

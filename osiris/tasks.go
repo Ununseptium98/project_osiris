@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 )
 
 type Request struct {
@@ -13,14 +14,13 @@ type Request struct {
 	HashingProcessTree    bool     `json:"HashingProcessTree"`
 	DumpRegistryKey       bool     `json:"DumpRegistryKey"`
 	Keys                  []string `json:"Keys"`
-	PrintSubkeys          bool     `json:"PrintSubkeys"`
 	WatchListAppend       bool     `json:"WatchListAppend"`
 	PathsToWatch          []string `json:"PathsToWatch"`
 	CheckWatchListChanges bool     `json:"CheckWatchListChanges"`
 }
 
-func ReadJson() Request {
-	byteValue, err := ioutil.ReadFile("actions.json")
+func ReadTaskJson(taskJSON string) Request {
+	byteValue, err := ioutil.ReadFile(taskJSON)
 
 	if err != nil {
 		log.Fatal(err)
@@ -35,5 +35,38 @@ func ReadJson() Request {
 	}
 
 	return request
+
+}
+
+func ExecuteTaskJson(taskJSON string) {
+
+	req := ReadTaskJson(taskJSON)
+
+	requestID := req.RequestID
+
+	if req.ProcessTree {
+		WriteProcessPathJson(requestID)
+	}
+
+	if req.HashingProcessTree {
+		WriteProcessExeHashJson(req.RequestID)
+	}
+
+	if req.DumpRegistryKey {
+
+		for iterator, key := range req.Keys {
+			GetAllKeyValuesJSON(key, 1, true,
+				req.RequestID+"_key"+strconv.FormatInt(int64(iterator), 10))
+
+		}
+	}
+
+	if req.WatchListAppend {
+		CreateWatchList()
+
+		for _, path := range req.PathsToWatch {
+			AppendWatchList(path)
+		}
+	}
 
 }

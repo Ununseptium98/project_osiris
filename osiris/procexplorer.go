@@ -2,7 +2,11 @@ package osiris
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/shirou/gopsutil/process"
 )
@@ -28,6 +32,48 @@ func GetProcessExePath(PID int32) (string, error) {
 
 	}
 	return path, err
+
+}
+
+func GetProcessExePathMap() map[string]string {
+
+	//Creates a JSON with processTree and PID
+
+	pidProcessMap := make(map[string]string)
+
+	pid_table, err := process.Pids() //retrieve table of PID of running processes
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, pid := range pid_table { //Creates a map with exe path with exe hash
+
+		processPath, err := GetProcessExePath(pid)
+
+		if err != nil || processPath == "null" { //If there was an error reading from the PID, pass it
+
+			continue
+		}
+		//associate each prpcess exe path to its hash in a map
+		pidProcessMap[strconv.FormatInt(int64(pid), 10)] = processPath
+
+	}
+
+	return pidProcessMap
+}
+
+func GetProcessPathJson() []byte {
+	//Creates a JSON with processTree and PID
+
+	pidProcessMap := GetProcessExePathMap()
+
+	json, err := json.Marshal(pidProcessMap)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return json
 
 }
 
@@ -72,5 +118,25 @@ func GetProcessExeHashJson() []byte {
 	}
 
 	return json
+
+}
+
+func WriteProcessExeHashJson(requestID string) {
+
+	json := GetProcessExeHashJson()
+
+	ioutil.WriteFile(requestID+"_ProcessExeHashJson.json", json, os.ModePerm)
+
+	fmt.Println("OUTPUT : " + requestID + "_ProcessExeHashJson.json")
+
+}
+
+func WriteProcessPathJson(requestID string) {
+
+	json := GetProcessPathJson()
+
+	ioutil.WriteFile(requestID+"_ProcessPathJson.json", json, os.ModePerm)
+
+	fmt.Println("OUTPUT : " + requestID + "_ProcessPathJson.json")
 
 }
