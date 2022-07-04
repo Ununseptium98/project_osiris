@@ -242,7 +242,7 @@ func GetSubKeyValues(requestedKey string, requestedRootKey int, subkeyNumber int
 
 	for iterator, subkey := range subkeysTable {
 
-		fmt.Printf("Iteration number %d with %s \n", iterator, requestedKey+`\`+subkey)
+		fmt.Printf("\n ******Subkey number %d > %s \n", iterator, requestedKey+`\`+subkey)
 
 		GetAllKeyValuesJSON(requestedKey+`\`+subkey, requestedRootKey, false, "")
 

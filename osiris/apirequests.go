@@ -2,6 +2,7 @@ package osiris
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -24,9 +25,12 @@ func EnrollAgent(host string) {
 		"username": username,
 	})
 
-	responseBody := bytes.NewBuffer(postBody)
+	fmt.Println("json =", string(postBody))
 
-	resp, err := http.Post(host+"/client/"+getMacAddr(), "application/json", responseBody)
+	responseBody := bytes.NewBuffer(postBody)
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	resp, err := http.Post("https://"+host+":4444/client/"+getMacAddr(), "application/json", responseBody)
 
 	if err != nil {
 		log.Fatal(err)
@@ -82,7 +86,8 @@ func SendHash(host string, filePath string) {
 	//
 	responseBody := bytes.NewBuffer(postBody)
 
-	resp, err := http.Post(host+"/client/"+getMacAddr(), "application/json", responseBody)
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	resp, err := http.Post("https://"+host+":4444/edr", "application/json", responseBody)
 
 	if err != nil {
 		log.Fatal(err)

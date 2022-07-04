@@ -34,8 +34,9 @@ func InteractiveMode() {
 	prompt := promptui.Select{
 		Label: "What would you like to do ?",
 		Items: []string{"Print process exe with PID", "Print process exe with hash",
-			"Get Registry Key Values", "Get Registry key subkeys",
-			"Get Watcher report", "Append path to WatchList"},
+			"Get Registry Key Values", "Get Registry key's SubKeys' value",
+			"Get Watcher report", "Append path to WatchList",
+			""},
 	}
 
 	_, result, err := prompt.Run()
@@ -66,14 +67,19 @@ func InteractiveMode() {
 		InteractiveMode()
 
 	case "Get Registry Key Values": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-		RegKeyPrompt()
+		RegKeyPrompt("key")
 
 		InteractiveMode()
+
+	case "Get Registry key's SubKeys' value": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		RegKeyPrompt("subkey")
+		InteractiveMode()
+
 	}
 
 }
 
-func RegKeyPrompt() {
+func RegKeyPrompt(keytype string) {
 
 	prompt := promptui.Select{
 		Label: "Select a registry key or select custom key ",
@@ -89,15 +95,24 @@ func RegKeyPrompt() {
 
 	fmt.Printf("You choose %q\n", result)
 
-	if result == "Custom" {
-		CustomKeyPrompt()
+	if keytype == "key" {
+		if result == "Custom" {
+			CustomKeyPrompt("key")
+		} else {
+			GetAllKeyValuesJSON(result, 1, false, "")
+		}
 	} else {
-		GetAllKeyValuesJSON(result, 1, false, "")
+		if result == "Custom" {
+			CustomKeyPrompt("subkey")
+		} else {
+			GetSubKeyValues(result, 1, -1)
+		}
+
 	}
 
 }
 
-func CustomKeyPrompt() {
+func CustomKeyPrompt(keytype string) {
 
 	validate := func(input string) error {
 		err := TestRequestKey(input)
@@ -121,7 +136,12 @@ func CustomKeyPrompt() {
 
 	fmt.Printf("You requested %q\n", result)
 
-	GetAllKeyValuesJSON(result, 1, false, "")
+	if keytype == "key" {
+		GetAllKeyValuesJSON(result, 1, false, "")
+
+	} else {
+		GetSubKeyValues(result, 1, -1)
+	}
 
 }
 func PrintBanner() {
