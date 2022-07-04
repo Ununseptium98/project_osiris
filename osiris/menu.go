@@ -37,7 +37,7 @@ func InteractiveMode() {
 		Items: []string{"Print process exe with PID", "Print process exe with hash",
 			"Get Registry Key Values", "Get Registry key's SubKeys' value",
 			"Get Watcher report", "Append path to WatchList",
-			""},
+			"Enroll agent", "Send file hash"},
 	}
 
 	_, result, err := prompt.Run()
@@ -76,16 +76,23 @@ func InteractiveMode() {
 		RegKeyPrompt("subkey")
 		InteractiveMode()
 
-	case "Get Watcher report":
+	case "Get Watcher report": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		watcherReport := WatcherMap()
 		for path, hash := range watcherReport {
 			fmt.Println("Path = ", path, "\n Hash >", hash, "\n----")
 		}
 		InteractiveMode()
-	case "Append path to WatchList":
+	case "Append path to WatchList": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 		WatcherAppendPrompt()
 		InteractiveMode()
+
+	case "Enroll agent": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		InteractiveMode()
+
+	case "Send file hash": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		InteractiveMode()
+
 	}
 
 }
