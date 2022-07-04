@@ -3,6 +3,7 @@ package osiris
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/manifoldco/promptui"
 	"github.com/satheshshiva/go-banner-printer/banner"
@@ -75,6 +76,16 @@ func InteractiveMode() {
 		RegKeyPrompt("subkey")
 		InteractiveMode()
 
+	case "Get Watcher report":
+
+		watcherReport := WatcherMap()
+		for path, hash := range watcherReport {
+			fmt.Println("Path = ", path, "\n Hash >", hash, "\n----")
+		}
+		InteractiveMode()
+	case "Append path to WatchList":
+		WatcherAppendPrompt()
+		InteractiveMode()
 	}
 
 }
@@ -144,6 +155,50 @@ func CustomKeyPrompt(keytype string) {
 	}
 
 }
+
+func WatcherAppendPrompt() {
+
+	/*
+		validate := func(input string) error {
+			_, err := os.Stat(input)
+			if err != nil {
+				return errors.New("Path doesn't match any file nor directory")
+			}
+			return nil
+		}*/
+
+	prompt := promptui.Prompt{
+		Label: "Enter file or directory path. Directories end with a / or a \\",
+	}
+
+Prompt:
+	flag := 1
+
+	result, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
+	fmt.Printf("You added this to Watchile file : %q\n", result)
+
+	_, err = os.Stat(result)
+	if err != nil {
+		fmt.Println("/!\\ /!\\ Path doesn't match any file nor directory. Retry :")
+		flag = 0
+	}
+
+	if flag != 1 {
+		goto Prompt
+	}
+
+	AppendWatchList(result)
+
+	fmt.Println("Path added to Watcher's watchlist")
+
+}
+
 func PrintBanner() {
 	_ = banner.Print(nil)
 

@@ -1,5 +1,2 @@
-C:\Users\Nazim\Videos\
-C:\Users\Nazim\Videos\World Of Warcraft
-C:\Users\Nazim\Videos\World Of Warcraft\bite.png
-C:\Windows\WaaS\services
-C:\Windows\WaaS\services
+d:\kp_pdf.pdf
+D:\Capture.png

@@ -73,7 +73,7 @@ func ReadWatchList() []string {
 
 }
 
-func WatcherJSON() map[string]string {
+func WatcherMap() map[string]string {
 	/*
 		writes in json format the hash of the directories or files
 	*/
@@ -107,7 +107,7 @@ func WriteWatcherJSON() {
 
 	date := strings.Split(time.Now().String(), " ")[0] //Gets date
 
-	watcherReport := WatcherJSON()
+	watcherReport := WatcherMap()
 	json, _ := json.Marshal(watcherReport)
 	ioutil.WriteFile(date+"_WatcherReport.json", json, os.ModePerm)
 
