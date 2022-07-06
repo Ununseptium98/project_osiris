@@ -13,7 +13,7 @@ import (
 	"os/user"
 )
 
-func EnrollAgent(host string) {
+func EnrollAgent(host string) error {
 
 	hostname, _ := os.Hostname()
 	currentUser, _ := user.Current()
@@ -33,7 +33,7 @@ func EnrollAgent(host string) {
 	resp, err := http.Post("https://"+host+":4444/client/"+getMacAddr(), "application/json", responseBody)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	defer resp.Body.Close()
@@ -43,11 +43,12 @@ func EnrollAgent(host string) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	stringBody := string(body)
 	log.Printf(stringBody)
+	return nil
 
 }
 
@@ -62,7 +63,7 @@ type hashReq struct {
 	Data      dataType `json:"data"`
 }
 
-func SendHash(host string, filePath string) {
+func SendHash(host string, filePath string) error {
 
 	//Creates the data for the request
 
@@ -90,7 +91,7 @@ func SendHash(host string, filePath string) {
 	resp, err := http.Post("https://"+host+":4444/edr", "application/json", responseBody)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	defer resp.Body.Close()
@@ -105,7 +106,7 @@ func SendHash(host string, filePath string) {
 
 	stringBody := string(body)
 	log.Printf(stringBody)
-
+	return nil
 }
 
 func getMacAddr() (addr string) {

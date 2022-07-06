@@ -120,7 +120,7 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 	k, err := registry.OpenKey(getRootKey(requestedRootKey), requestedKey, registry.QUERY_VALUE)
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Access error with the key")
 	}
 	defer k.Close()
 
@@ -128,7 +128,7 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 
 	valueNames, err := k.ReadValueNames(-1) // reads all names in the key
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Access error with the key")
 	}
 
 	for _, name := range valueNames {
@@ -136,7 +136,7 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 		_, valtype, err := k.GetValue(name, nil)
 
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("Access error with the key")
 		}
 
 		switch valtype {
@@ -144,7 +144,8 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 		case registry.SZ:
 			value, _, err := k.GetStringValue(name)
 			if err != nil {
-				log.Fatal(err)
+				value := "Unhandled Value type"
+				keyValueMap[name] = value
 			}
 
 			keyValueMap[name] = value
@@ -153,12 +154,14 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 		case registry.EXPAND_SZ:
 			s, _, err := k.GetStringValue(name)
 			if err != nil {
-				log.Fatal(err)
+				value := "Unhandled Value type"
+				keyValueMap[name] = value
 			}
 
 			value, err := registry.ExpandString(s)
 			if err != nil {
-				log.Fatal(err)
+				value := "Unhandled Value type"
+				keyValueMap[name] = value
 			}
 
 			keyValueMap[name] = value
@@ -167,7 +170,8 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 		case registry.DWORD, registry.QWORD:
 			value, _, err := k.GetIntegerValue(name)
 			if err != nil {
-				log.Fatal(err)
+				value := "Unhandled Value type"
+				keyValueMap[name] = value
 			}
 
 			keyValueMap[name] = strconv.FormatInt(int64(value), 10)
@@ -176,7 +180,9 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 		case registry.BINARY:
 			value, _, err := k.GetBinaryValue(name)
 			if err != nil {
-				log.Fatal(err)
+				value := "Unhandled Value type"
+				keyValueMap[name] = value
+
 			}
 
 			keyValueMap[name] = string(value)
@@ -185,7 +191,9 @@ func GetAllKeyValuesJSON(requestedKey string, requestedRootKey int, printJSON bo
 		case registry.MULTI_SZ:
 			value, _, err := k.GetStringsValue(name)
 			if err != nil {
-				log.Fatal(err)
+				value := "Unhandled Value type"
+				keyValueMap[name] = value
+
 			}
 			keyValueMap[name] = value[0]
 			fmt.Printf("----\nName > %s\n value =  %s \n", name, value)
@@ -229,6 +237,7 @@ func GetSubKeyValues(requestedKey string, requestedRootKey int, subkeyNumber int
 	k, err := registry.OpenKey(getRootKey(requestedRootKey), requestedKey, registry.QUERY_VALUE|registry.ENUMERATE_SUB_KEYS)
 
 	if err != nil {
+
 		log.Fatal()
 	}
 	defer k.Close()

@@ -2,7 +2,6 @@ package osiris
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -29,10 +28,6 @@ func ReadTaskJson(taskJSON string) Request {
 	var request Request
 
 	json.Unmarshal(byteValue, &request)
-
-	for _, key := range request.Keys {
-		fmt.Println("Key ", key)
-	}
 
 	return request
 

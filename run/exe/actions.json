@@ -1,0 +1,12 @@
+{   
+    "RequestID" : "INV0001",
+    "ProcessTree" : true,
+    "HashingProcessTree" : true,
+    "DumpRegistryKey" : true,
+    "Keys" : ["SYSTEM\\Software\\Microsoft",
+            "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"],
+    "WatchListAppend" : true,
+    "PathsToWatch" : ["C:\\Windows\\WaaS\\services"],
+    "CheckWatchListChanges" : true
+
+}

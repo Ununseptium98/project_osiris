@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/satheshshiva/go-banner-printer/banner"
@@ -27,6 +28,9 @@ func PromptMenu() {
 
 	if result == "Interactive" {
 		InteractiveMode()
+	} else {
+		AgentMode()
+		PromptMenu()
 	}
 
 }
@@ -88,12 +92,39 @@ func InteractiveMode() {
 		InteractiveMode()
 
 	case "Enroll agent": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+		fmt.Println("***Enrolling Agent***")
+
+		err := EnrollAgent("192.168.30.11")
+		if err != nil {
+			fmt.Println("Agent enrollement failed. Server side issue")
+		}
+		fmt.Println("Agent successfully enrolled or already been enrolled .")
 		InteractiveMode()
 
 	case "Send file hash": //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+		SendHashPrompt()
 		InteractiveMode()
 
 	}
+
+}
+
+func AgentMode() {
+
+	fmt.Println("**AGENT MODE RUNNING**")
+	ReadTaskJson("actions.json")
+	time.Sleep(3 * time.Second)
+
+	fmt.Println("***Reading task JSON file***")
+
+	time.Sleep(3 * time.Second)
+
+	fmt.Println("***Executing tasks in the JSON file***")
+
+	ExecuteTaskJson("actions.json")
+
+	fmt.Println("***Find json results in the application folder ***")
 
 }
 
@@ -206,6 +237,37 @@ Prompt:
 
 }
 
+func SendHashPrompt() {
+
+	prompt := promptui.Prompt{
+		Label: "Enter file path with its file extension. ",
+	}
+
+Prompt:
+	flag := 1
+
+	result, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+
+	fmt.Printf("You request this file : %q\n", result)
+
+	_, err = os.Stat(result)
+	if err != nil {
+		fmt.Println("/!\\ /!\\ Path doesn't match any file. Retry :")
+		flag = 0
+	}
+
+	if flag != 1 {
+		goto Prompt
+	}
+
+	SendHash("192.168.30.11", result)
+
+}
 func PrintBanner() {
 	_ = banner.Print(nil)
 
